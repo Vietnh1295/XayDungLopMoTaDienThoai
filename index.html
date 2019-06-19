@@ -5,7 +5,7 @@
     <title>Title</title>
 </head>
 <body>
-<form>
+<form style="width: 650px">
     <fieldset>
         <legend>
             Iphone
@@ -18,10 +18,10 @@
         <input type="button" value="Gửi cho nokia" id="GuiChoNokia" onclick="Gui(this)">
         <div id="IpStatus">Tắt</div>
         <div id="IpBattery">100 %</div>
-        <textarea cols="60" rows="5" id="resultIphone"></textarea>
+        <textarea cols="80" rows="5" id="resultIphone"></textarea>
     </fieldset>
 </form>
-<form>
+<form style="width: 650px">
     <fieldset>
         <legend>
             Nokia
@@ -34,15 +34,15 @@
         <input type="button" value="Gửi cho ip" id="GuiChoIp" onclick="Gui(this)">
         <div id="NokiaStatus">Tắt</div>
         <div id="NokiaBattery">100 %</div>
-        <textarea cols="60" rows="5" id="resultNoika"></textarea>
+        <textarea cols="80" rows="5" id="resultNoika"></textarea>
     </fieldset>
 </form>
 <script>
-    var Mobile = function (battery, textToSend, textReceive, textSend) {
+    var Mobile = function (battery) {
         this.battery = battery;
-        this.textToSend = textToSend;
-        this.textReceive = textReceive;
-        this.textSend = textSend;
+        this.textToSend = "";
+        this.textReceive = [];
+        this.textSend = [];
         this.status = false;
         this.setBattery = function (Battery) {
             this.battery = Battery;
@@ -54,19 +54,20 @@
             return this.textToSend;
         }
         this.settextToSend = function (textToSend) {
+
             this.textToSend = textToSend;
         }
         this.gettextReceive = function () {
             return this.textReceive;
         }
         this.settextReceive = function (textReceive) {
-            this.textReceive = textReceive;
+            this.textReceive.unshift(textReceive);
         }
         this.gettextSend = function () {
             return this.textSend;
         }
         this.settextSend = function (textSend) {
-            this.textSend = textSend;
+            this.textSend.unshift(textSend);
         }
         this.check = function () {
             if (this.status && this.battery != 0) {
@@ -91,8 +92,8 @@
             }
         }
     }
-    var Iphone = new Mobile(100, '', [], []);
-    var Nokia = new Mobile(100, '', [], []);
+    var Iphone = new Mobile(100);
+    var Nokia = new Mobile(100);
 
     function showBattery() {
         document.getElementById('IpStatus').innerHTML = Iphone.status ? 'Bật' : 'Tắt';
@@ -156,7 +157,7 @@
             case 'HopThuGuiDenIp':
                 if (Iphone.check()) {
                     Iphone.settextToSend(document.getElementById('resultIphone').value);
-                    document.getElementById('resultIphone').value=Iphone.gettextReceive();
+                    HienThiMang(Iphone.gettextReceive(),'resultIphone');
                     Iphone.decrease();
                 } else {
                     alert('Mời bật điện thoại iphone')
@@ -166,7 +167,7 @@
             case 'HopThuGuiDenNokia':
                 if (Nokia.check()) {
                     Nokia.settextToSend(document.getElementById('resultNoika').value);
-                    document.getElementById('resultNoika').innerHTML=Nokia.gettextReceive();
+                    HienThiMang(Nokia.gettextReceive(),'resultNoika');
                     Nokia.decrease();
 
                 } else {
@@ -182,7 +183,7 @@
             case 'TinDaGuiIp':
                 if (Iphone.check()) {
                     Iphone.settextToSend(document.getElementById('resultIphone').value);
-                    document.getElementById('resultIphone').value=Iphone.gettextSend();
+                    HienThiMang(Iphone.gettextSend(),'resultIphone');
                     Iphone.decrease();
                 } else {
                     alert('Mời bật điện thoại iphone')
@@ -192,6 +193,7 @@
             case 'TinDaGuiNokia':
                 if (Nokia.check()) {
                     Nokia.settextToSend(document.getElementById('resultNoika').value);
+                    HienThiMang(Nokia.gettextSend(),'resultNoika');
                     document.getElementById('resultNoika').value=Nokia.gettextSend();
                     Nokia.decrease();
                 } else {
@@ -224,7 +226,15 @@
                 }
                 break;
         }
+
         showBattery();
+    } function HienThiMang(array,str)
+    {
+        document.getElementById(str).value="";
+        for(var i=0;i<array.length;i++)
+        {
+            document.getElementById(str).value  += "(Tin nhan thu"+(i+1)+" la "+array[i]+")";
+        }
     }
 </script>
 </body>
